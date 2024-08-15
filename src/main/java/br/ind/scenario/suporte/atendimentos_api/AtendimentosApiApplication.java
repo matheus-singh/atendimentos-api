@@ -4,7 +4,8 @@ import br.ind.scenario.suporte.atendimentos_api.service.data.DataConverter;
 import br.ind.scenario.suporte.atendimentos_api.service.data.IDataConverter;
 import br.ind.scenario.suporte.atendimentos_api.service.octa.ConsumoOctadeskAPI;
 import br.ind.scenario.suporte.atendimentos_api.service.octa.OctaAPIConnection;
-import br.ind.scenario.suporte.atendimentos_api.test.InteracoesCmd;
+import br.ind.scenario.suporte.atendimentos_api.service.repository.TicketRepository;
+import br.ind.scenario.suporte.atendimentos_api.test.CommandLineTestApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +18,9 @@ public class AtendimentosApiApplication implements CommandLineRunner {
 	@Autowired
 	private ConfigurableApplicationContext context;
 
+	@Autowired
+	private TicketRepository ticketRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(AtendimentosApiApplication.class, args);
 	}
@@ -27,7 +31,7 @@ public class AtendimentosApiApplication implements CommandLineRunner {
 		OctaAPIConnection connection = new OctaAPIConnection();
 		ConsumoOctadeskAPI octadeskAPI = new ConsumoOctadeskAPI(connection);
 
-		InteracoesCmd cmdApp = new InteracoesCmd(dataConverter, octadeskAPI);
+		CommandLineTestApp cmdApp = new CommandLineTestApp(dataConverter, octadeskAPI, ticketRepository);
 		cmdApp.run();
 		System.exit(SpringApplication.exit(context, () -> 0));
 	}
