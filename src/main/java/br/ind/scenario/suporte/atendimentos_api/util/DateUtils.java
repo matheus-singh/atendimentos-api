@@ -11,6 +11,12 @@ public class DateUtils {
         return previousDate.toString();
     }
 
+    public static String getYesterdayDateAsString() {
+        LocalDate today = LocalDate.now();
+        LocalDate previousDate = today.minusDays(1);
+        return previousDate.toString();
+    }
+
     // The following method only work for ISO 8601 date formats, so you can split at 'T'
     public static LocalDate createLocalDateFromString(String dateString) {
         // Check if the input string is null or empty

@@ -1,12 +1,13 @@
 package br.ind.scenario.suporte.atendimentos_api.service.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class DataConverter implements IDataConverter{
     private final ObjectMapper MAPPER = new ObjectMapper();
     @Override
