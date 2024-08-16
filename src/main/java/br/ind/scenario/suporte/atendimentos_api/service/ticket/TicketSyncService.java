@@ -78,10 +78,10 @@ public class TicketSyncService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void saveTicketsOfTheWeek(){
         try {
-            logger.info("Starting database feed...");
+            logger.info("Starting sync..");
             String listOfTicketsJson = octadeskAPI.getTicketsOfTheWeek();
             this.createTicketsAndSaveAll(listOfTicketsJson, ticketRepository);
-            logger.info("Database feed completed.");
+            logger.info("Database sync completed.");
         } catch (Exception e) {
             System.err.println("Error during daily database feed: " + e.getMessage());
         }
