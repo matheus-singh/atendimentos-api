@@ -25,7 +25,7 @@ O objetivo da **atendimentos-api** é criar uma ferramenta para o time de suport
 1. Clone o repositório:
 
     ```bash
-    git clone https://github.com/seu-usuario/atendimentos-api.git
+    git clone https://github.com/matheus-singh/atendimentos-api.git
     ```
 
 2. Configure o banco de dados PostgreSQL e atualize as credenciais no arquivo `application.properties`.
