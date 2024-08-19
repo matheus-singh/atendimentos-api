@@ -47,10 +47,4 @@ O objetivo da **atendimentos-api** é criar uma ferramenta para o time de suport
 
 Contribuições são bem-vindas! Se você encontrar problemas ou tiver sugestões, sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
-## Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
-
----
-
 Developed by Matheus Singh Cardoso.
