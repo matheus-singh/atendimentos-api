@@ -27,40 +27,45 @@ public class ConsumoOctadeskAPI {
 
     private final String BASE_TICKET_URL = "https://api.octadesk.services/tickets/";
 
-    private String getApiToken() {
-        String url = "https://api.octadesk.services/login";
-        String subdomain = "scenarioautomation";
-
-        String username = System.getenv("OCTA_USER");
-        String password = System.getenv("OCTA_PASSWORD");
-
-        HttpClient client = HttpClient.newHttpClient();
-
-        String jsonPayload = "{"
-                + "\"username\": \"" + username + "\","
-                + "\"password\": \"" + password + "\""
-                + "}";
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("accept", "application/json")
-                .header("subDomain", subdomain)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
-                .timeout(Duration.ofSeconds(10))
-                .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String responseBody = response.body();
-            JsonNode jsonResponse = MAPPER.readTree(responseBody);
-            String token = jsonResponse.path("token").asText();
-            return token;
-        } catch (Exception e) {
-            logger.info("An Error has occured in the token request: "+e.getMessage());
-            return "";
-        }
+    private String getApiToken(){
+        return System.getenv("OCTA_API_TOKEN");
     }
+
+//    private String getApiToken() {
+//        String url = "https://api.octadesk.services/login";
+//        String subdomain = "scenarioautomation";
+//
+//        String username = System.getenv("OCTA_USER");
+//        String password = System.getenv("OCTA_PASSWORD");
+//
+//        HttpClient client = HttpClient.newHttpClient();
+//
+//        String jsonPayload = "{"
+//                + "\"username\": \"" + username + "\","
+//                + "\"password\": \"" + password + "\""
+//                + "}";
+//
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(url))
+//                .header("accept", "application/json")
+//                .header("subDomain", subdomain)
+//                .header("Content-Type", "application/json")
+//                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+//                .timeout(Duration.ofSeconds(10))
+//                .build();
+//
+//        try {
+//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//            String responseBody = response.body();
+//            logger.info("Token Request: " + response.statusCode());
+//            JsonNode jsonResponse = MAPPER.readTree(responseBody);
+//            String token = jsonResponse.path("token").asText();
+//            return token;
+//        } catch (Exception e) {
+//            logger.info("An Error has occured in the token request: "+e.getMessage());
+//            return "";
+//        }
+//    }
 
     private HttpResponse<String> octaHttpRequest(String url){
         HttpClient client = HttpClient.newHttpClient();

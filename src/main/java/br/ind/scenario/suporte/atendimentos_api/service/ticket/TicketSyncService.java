@@ -57,7 +57,7 @@ public class TicketSyncService {
             logger.info("Creating Tickets...");
             List<TicketSearchData> ticketsData = dataConverter.stringToJsonList(listOfTicketsJson, TicketSearchData.class);
             List<Ticket> tickets = ticketsData.stream().map(Ticket::new).collect(Collectors.toList());
-            logger.info("Total of {} Tickets Created. Saving or updating unique ones to the Data Base...", tickets.size());
+            logger.info("Total of {} Tickets Created. Saving and updating the Data Base...", tickets.size());
 
             tickets.forEach(ticket -> {
                 Optional<Ticket> existingTicketOpt = repository.findByOctaId(ticket.getOctaId());
@@ -69,13 +69,13 @@ public class TicketSyncService {
                     repository.save(ticket);
                 }
             });
-            logger.info("Tickets Saved or Updated. Returning...");
+            logger.info("Tickets Saved and Updated. Returning...");
         } catch (Exception e) {
             logger.info("An error has occurred: {}", e.getMessage());
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 6,19 * * *")
     public void saveTicketsOfTheWeek(){
         try {
             logger.info("Starting sync..");
@@ -83,7 +83,7 @@ public class TicketSyncService {
             this.createTicketsAndSaveAll(listOfTicketsJson, ticketRepository);
             logger.info("Database sync completed.");
         } catch (Exception e) {
-            System.err.println("Error during daily database feed: " + e.getMessage());
+            System.err.println("Error during database feed: " + e);
         }
     }
 }
