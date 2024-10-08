@@ -19,6 +19,8 @@ public record TicketSearchData(
         @JsonAlias("doneDate") String dataDeResolucao,
         @JsonAlias("octadeskNumberUrl") String linkOD,
         @JsonAlias("productMembersJoin") String produto,
+        @JsonAlias("topicName") String topicName,
+        @JsonAlias("topicGroupName") String topicGroupName,
         @JsonAlias("customField") CustomFieldData customFieldData
         ) {
 }

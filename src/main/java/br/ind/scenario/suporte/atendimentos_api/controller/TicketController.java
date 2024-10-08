@@ -1,6 +1,5 @@
 package br.ind.scenario.suporte.atendimentos_api.controller;
 
-import br.ind.scenario.suporte.atendimentos_api.model.Ticket;
 import br.ind.scenario.suporte.atendimentos_api.model.dto.TicketDTO;
 import br.ind.scenario.suporte.atendimentos_api.service.ticket.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +30,6 @@ public class TicketController {
     @GetMapping("/semana")
     public List<TicketDTO> getTicketsOfTheWeek(){
         return ticketService.getTicketsOfTheWeek();
+
     }
 }

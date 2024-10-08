@@ -30,12 +30,12 @@ public class TicketSyncService {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketSyncService.class);
 
-    @PostConstruct
-    public void init() {
-        saveTicketsOfTheWeek();
-    }
+//    @PostConstruct
+//    public void init() {
+//        saveTicketsOfTheWeek();
+//    }
 
-    private void updateExistingTicket(Ticket existingTicket, Ticket newTicket) {
+    public void updateExistingTicket(Ticket existingTicket, Ticket newTicket) {
         existingTicket.setNumero(newTicket.getNumero());
         existingTicket.setStatus(newTicket.getStatus());
         existingTicket.setClassificacao(newTicket.getClassificacao());
@@ -50,6 +50,8 @@ public class TicketSyncService {
         existingTicket.setLinkOD(newTicket.getLinkOD());
         existingTicket.setProduto(newTicket.getProduto());
         existingTicket.setLinhaDeProduto(newTicket.getLinhaDeProduto());
+        existingTicket.setTopico(newTicket.getTopico());
+        existingTicket.setClassificacaoDoTopico(newTicket.getClassificacaoDoTopico());
     }
 
     private void createTicketsAndSaveAll (String listOfTicketsJson, TicketRepository repository){

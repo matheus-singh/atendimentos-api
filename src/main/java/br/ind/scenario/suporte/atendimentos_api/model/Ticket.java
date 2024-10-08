@@ -5,6 +5,8 @@ import br.ind.scenario.suporte.atendimentos_api.util.DateUtils;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Tickets")
@@ -23,6 +25,12 @@ public class Ticket {
 
     @Enumerated(EnumType.STRING)
     private TicketClassification classificacao;
+
+    @Enumerated(EnumType.STRING)
+    private Topic topico;
+
+    @Enumerated(EnumType.STRING)
+    private TopicClassification classificacaoDoTopico;
 
     private String titulo;
     private String revenda;
@@ -45,6 +53,8 @@ public class Ticket {
         this.numero = ticketSearchData.numero();
         this.status = TicketStatus.fromString(ticketSearchData.status());
         this.classificacao = TicketClassification.fromString(ticketSearchData.classificacao());
+        this.topico = Topic.fromString(ticketSearchData.topicName());
+        this.classificacaoDoTopico = TopicClassification.fromString(ticketSearchData.topicGroupName());
         this.titulo = ticketSearchData.titulo();
         this.revenda = ticketSearchData.revenda();
         this.tecnico = ticketSearchData.tecnico();
@@ -213,4 +223,19 @@ public class Ticket {
                 '}';
     }
 
+    public Topic getTopico() {
+        return topico;
+    }
+
+    public void setTopico(Topic topico) {
+        this.topico = topico;
+    }
+
+    public TopicClassification getClassificacaoDoTopico() {
+        return classificacaoDoTopico;
+    }
+
+    public void setClassificacaoDoTopico(TopicClassification classificacaoDoTopico) {
+        this.classificacaoDoTopico = classificacaoDoTopico;
+    }
 }
