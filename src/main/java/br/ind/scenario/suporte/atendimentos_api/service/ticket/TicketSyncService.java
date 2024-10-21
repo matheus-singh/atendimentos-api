@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TicketSyncService {
@@ -30,15 +30,85 @@ public class TicketSyncService {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketSyncService.class);
 
-//    @PostConstruct
-//    public void init() {
-//        saveTicketsOfTheWeek();
-//    }
+    // Este método será chamado ao iniciar o aplicativo para sincronizar tickets
+    @PostConstruct
+    public void init() {
+        syncTickets();
+    }
 
+    // Método para sincronizar os ultimos tickets de 30 em 30 minutos, segunda a sexta, das 08:00 às 18:00
+    @Scheduled(cron = "0 0/30 8-18 * * MON-FRI")
+    public void syncTickets() {
+        Ticket ultimoTicket = ticketRepository.getUltimoTicket();
+        Long numero = ultimoTicket.getNumero();
+        List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
+        try {
+            logger.info("Sincronizando tickets...");
+            for (Long i = numero - 10; i <= numero + 10; i++) {
+                String ticketJson = octadeskAPI.getTicket(i);
+                TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+                Ticket ticket = new Ticket(ticketFound);
+                listaDeTicketsEncontrados.add(ticket);
+            }
+        } catch (Exception e) {
+            logger.info("<--------------------- Erro na requisição dos tickets para sincronização --------------------->");
+            logError(e);
+        }
+        try {
+            listaDeTicketsEncontrados.forEach(this::saveOrUpdateTicket);
+            logger.info("Tickets sincronizados!");
+        } catch (Exception e) {
+            logger.info("<--------------------- Erro na sincronização do banco de dados --------------------->");
+            logError(e);
+        }
+    }
+
+    // Método para sincronizar todos os tickets todo sábado às 00:00 horas
+    @Scheduled(cron = "0 0 0 * * SAT")
+    public void syncAllTimeTickets() {
+        Ticket ultimoTicket = ticketRepository.getUltimoTicket();
+        Long numero = ultimoTicket.getNumero();
+        List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
+        int counter = 0;
+        try {
+            logger.info("Sincronizando todos os tickets...");
+            for (Long i = 1L; i <= numero; i++) {
+                String ticketJson = octadeskAPI.getTicket(i);
+                TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+                Ticket ticket = new Ticket(ticketFound);
+                listaDeTicketsEncontrados.add(ticket);
+                counter++;
+                if (counter == 500) {
+                    try {
+                        listaDeTicketsEncontrados.forEach(this::saveOrUpdateTicket);
+                        logger.info("500 Tickets Salvos e Atualizados.");
+                    } catch (Exception e) {
+                        logger.info("<--------------------- Erro na sincronização dos 500 tickets no banco de dados --------------------->");
+                        logError(e);
+                    }
+                    counter = 0;
+                    listaDeTicketsEncontrados.clear();
+                }
+            }
+        } catch (Exception e) {
+            logger.info("<--------------------- Erro na sincronização de todos os tickets --------------------->");
+            logError(e);
+        }
+        if (!listaDeTicketsEncontrados.isEmpty()) {
+            try {
+                listaDeTicketsEncontrados.forEach(this::saveOrUpdateTicket);
+                logger.info("Tickets Restantes Salvos e Atualizados.");
+            } catch (Exception e) {
+                logger.info("<--------------------- Erro na sincronização dos tickets restantes --------------------->");
+                logError(e);
+            }
+        }
+    }
+
+    // Demais métodos auxiliares
     public void updateExistingTicket(Ticket existingTicket, Ticket newTicket) {
         existingTicket.setNumero(newTicket.getNumero());
         existingTicket.setStatus(newTicket.getStatus());
-        existingTicket.setClassificacao(newTicket.getClassificacao());
         existingTicket.setTitulo(newTicket.getTitulo());
         existingTicket.setRevenda(newTicket.getRevenda());
         existingTicket.setTecnico(newTicket.getTecnico());
@@ -54,38 +124,20 @@ public class TicketSyncService {
         existingTicket.setClassificacaoDoTopico(newTicket.getClassificacaoDoTopico());
     }
 
-    private void createTicketsAndSaveAll (String listOfTicketsJson, TicketRepository repository){
-        try {
-            logger.info("Creating Tickets...");
-            List<TicketSearchData> ticketsData = dataConverter.stringToJsonList(listOfTicketsJson, TicketSearchData.class);
-            List<Ticket> tickets = ticketsData.stream().map(Ticket::new).collect(Collectors.toList());
-            logger.info("Total of {} Tickets Created. Saving and updating the Data Base...", tickets.size());
-
-            tickets.forEach(ticket -> {
-                Optional<Ticket> existingTicketOpt = repository.findByOctaId(ticket.getOctaId());
-                if (existingTicketOpt.isPresent()) {
-                    Ticket existingTicket = existingTicketOpt.get();
-                    updateExistingTicket(existingTicket, ticket);
-                    repository.save(existingTicket);
-                } else {
-                    repository.save(ticket);
-                }
-            });
-            logger.info("Tickets Saved and Updated. Returning...");
-        } catch (Exception e) {
-            logger.info("An error has occurred: {}", e.getMessage());
+    private void saveOrUpdateTicket(Ticket ticket) {
+        Optional<Ticket> existingTicketOpt = Optional.ofNullable(ticketRepository.findByNumber(ticket.getNumero()));
+        if (existingTicketOpt.isPresent() && !(existingTicketOpt.get().getOctaId() == null)) {
+            Ticket existingTicket = existingTicketOpt.get();
+            updateExistingTicket(existingTicket, ticket);
+            ticketRepository.save(existingTicket);
+        } else {
+            if (!(ticket.getOctaId() == null)) {
+                ticketRepository.save(ticket);
+            }
         }
     }
 
-    @Scheduled(cron = "0 0 6,19 * * *")
-    public void saveTicketsOfTheWeek(){
-        try {
-            logger.info("Starting sync..");
-            String listOfTicketsJson = octadeskAPI.getTicketsOfTheWeek();
-            this.createTicketsAndSaveAll(listOfTicketsJson, ticketRepository);
-            logger.info("Database sync completed.");
-        } catch (Exception e) {
-            System.err.println("Error during database feed: " + e);
-        }
+    private void logError(Exception e) {
+        logger.info("An error has occurred: {}", e.getMessage());
     }
 }

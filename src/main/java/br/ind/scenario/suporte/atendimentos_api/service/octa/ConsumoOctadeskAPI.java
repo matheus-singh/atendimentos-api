@@ -110,6 +110,13 @@ public class ConsumoOctadeskAPI {
         return response.body();
     }
 
+    public String getTicket(Long number) {
+        String url = BASE_TICKET_URL + String.valueOf(number);
+        logger.info("Requesting ticket number: {}", number);
+        HttpResponse<String> response = octaHttpRequest(url);
+        return response.body();
+    }
+
     public String getTicketsOfTheWeek() {
         String dateString = DateUtils.getLastWeekDateFromTodayAsString();
         String encodedDate = URLEncoder.encode(">" + dateString, StandardCharsets.UTF_8);

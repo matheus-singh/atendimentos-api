@@ -5,8 +5,7 @@ import br.ind.scenario.suporte.atendimentos_api.util.DateUtils;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "Tickets")
@@ -22,9 +21,6 @@ public class Ticket {
 
     @Enumerated(EnumType.STRING)
     private TicketStatus status;
-
-    @Enumerated(EnumType.STRING)
-    private TicketClassification classificacao;
 
     @Enumerated(EnumType.STRING)
     private Topic topico;
@@ -52,7 +48,6 @@ public class Ticket {
         this.octaId = ticketSearchData.octaId();
         this.numero = ticketSearchData.numero();
         this.status = TicketStatus.fromString(ticketSearchData.status());
-        this.classificacao = TicketClassification.fromString(ticketSearchData.classificacao());
         this.topico = Topic.fromString(ticketSearchData.topicName());
         this.classificacaoDoTopico = TopicClassification.fromString(ticketSearchData.topicGroupName());
         this.titulo = ticketSearchData.titulo();
@@ -70,6 +65,15 @@ public class Ticket {
             this.linhaDeProduto = LinhaDeProduto.SEM_LINHA_DE_PRODUTO;
         } else {
             this.linhaDeProduto = LinhaDeProduto.fromString(ticketSearchData.customFieldData().linhaDeProduto());
+        }
+
+        Optional<Integer> interactionsConteiner = Optional.ofNullable(ticketSearchData.interactions());
+
+        if(interactionsConteiner.isPresent() && interactionsConteiner.get()>1){
+            Optional<String> topicoUpdate = Optional.ofNullable(ticketSearchData.lastInteraction().propertyChanges().topicName());
+            Optional<String> classificacaoTopicoUpdate = Optional.ofNullable(ticketSearchData.lastInteraction().propertyChanges().topicGroupName());
+            topicoUpdate.ifPresent(t -> this.topico = Topic.fromString(t));
+            classificacaoTopicoUpdate.ifPresent(c -> this.classificacaoDoTopico = TopicClassification.fromString(c));
         }
     }
 
@@ -103,14 +107,6 @@ public class Ticket {
 
     public void setStatus(TicketStatus status) {
         this.status = status;
-    }
-
-    public TicketClassification getClassificacao() {
-        return classificacao;
-    }
-
-    public void setClassificacao(TicketClassification classificacao) {
-        this.classificacao = classificacao;
     }
 
     public String getTitulo() {
@@ -203,25 +199,27 @@ public class Ticket {
 
     @Override
     public String toString() {
-        return "Ticket{" +
-                "id=" + id +
-                ", octaId='" + octaId + '\'' +
-                ", numero=" + numero +
-                ", status=" + status +
-                ", classificacao=" + classificacao +
-                ", titulo='" + titulo + '\'' +
-                ", revenda='" + revenda + '\'' +
-                ", tecnico='" + tecnico + '\'' +
-                ", emailDoTecnico='" + emailDoTecnico + '\'' +
-                ", consultor='" + consultor + '\'' +
-                ", emailConsultor='" + emailConsultor + '\'' +
-                ", dataDeCriacao=" + (dataDeCriacao != null ? dataDeCriacao : "N/A") +
-                ", dataDeResolucao=" + (dataDeResolucao != null ? dataDeResolucao : "N/A") +
-                ", linkOD='" + linkOD + '\'' +
-                ", produto='" + produto + '\'' +
-                ", linhaDeProduto=" + linhaDeProduto +
+        return "Ticket{\n" +
+                "id=" + id + "\n" +
+                "octaId='" + octaId + '\'' + "\n" +
+                "numero=" + numero + "\n" +
+                "status=" + status + "\n" +
+                "topico=" + topico + "\n" +
+                "classificacaoDoTopico=" + classificacaoDoTopico + "\n" +
+                "titulo='" + titulo + '\'' + "\n" +
+                "revenda='" + revenda + '\'' + "\n" +
+                "tecnico='" + tecnico + '\'' + "\n" +
+                "emailDoTecnico='" + emailDoTecnico + '\'' + "\n" +
+                "consultor='" + consultor + '\'' + "\n" +
+                "emailConsultor='" + emailConsultor + '\'' + "\n" +
+                "dataDeCriacao=" + dataDeCriacao + "\n" +
+                "dataDeResolucao=" + dataDeResolucao + "\n" +
+                "linkOD='" + linkOD + '\'' + "\n" +
+                "produto='" + produto + '\'' + "\n" +
+                "linhaDeProduto=" + linhaDeProduto + "\n" +
                 '}';
     }
+
 
     public Topic getTopico() {
         return topico;

@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    Optional<Ticket> findByOctaId(String octaId);
 
     @Query("SELECT t from Ticket t WHERE t.numero = :number")
-    Ticket findByNumber(Integer number);
+    Ticket findByNumber(Long number);
 
     @Query("SELECT t from Ticket t WHERE t.dataDeCriacao >= :date")
     List<Ticket> findByDate(LocalDate date);
+
+    @Query("SELECT t FROM Ticket t WHERE t.numero = (SELECT MAX(t2.numero) FROM Ticket t2)")
+    Ticket getUltimoTicket();
 }

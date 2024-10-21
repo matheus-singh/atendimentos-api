@@ -2,7 +2,6 @@ package br.ind.scenario.suporte.atendimentos_api.model.dto;
 
 import br.ind.scenario.suporte.atendimentos_api.model.LinhaDeProduto;
 import br.ind.scenario.suporte.atendimentos_api.model.Ticket;
-import br.ind.scenario.suporte.atendimentos_api.model.TicketClassification;
 import br.ind.scenario.suporte.atendimentos_api.model.TicketStatus;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +12,6 @@ public class TicketDTO {
 
     private Long number;
     private TicketStatus status;
-    private TicketClassification classificacao;
     private String titulo;
     private String revenda;
     private String tecnico;
@@ -32,7 +30,6 @@ public class TicketDTO {
     public TicketDTO(Ticket ticket){
         this.number = ticket.getNumero();
         this.status = ticket.getStatus();
-        this.classificacao = ticket.getClassificacao();
         this.titulo = ticket.getTitulo();
         this.revenda = ticket.getRevenda();
         this.tecnico = ticket.getTecnico();
@@ -60,14 +57,6 @@ public class TicketDTO {
 
     public void setStatus(TicketStatus status) {
         this.status = status;
-    }
-
-    public TicketClassification getClassificacao() {
-        return classificacao;
-    }
-
-    public void setClassificacao(TicketClassification classificacao) {
-        this.classificacao = classificacao;
     }
 
     public String getTitulo() {

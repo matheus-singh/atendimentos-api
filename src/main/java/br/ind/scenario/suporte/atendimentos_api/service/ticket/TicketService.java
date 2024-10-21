@@ -7,8 +7,9 @@ import br.ind.scenario.suporte.atendimentos_api.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,17 +22,24 @@ public class TicketService {
         return new TicketDTO(ticket);
     }
 
-    public TicketDTO getTicketByNumber(Integer number){
-        return convertTicketToTicketDTO(ticketRepository.findByNumber(number));
+    public TicketDTO getTicketByNumber(Long number){
+        Optional<Ticket> ticket = Optional.ofNullable(ticketRepository.findByNumber(number));
+        return ticket.map(this::convertTicketToTicketDTO).orElse(null); // Retorna null se o ticket não for encontrado
     }
 
     public List<TicketDTO> getTicketsByDate(String date) {
-        List<Ticket> tickets = ticketRepository.findByDate(DateUtils.createLocalDateFromString(date));
+        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateUtils.createLocalDateFromString(date)))
+                .orElse(new ArrayList<>()); // Retorna uma lista vazia se for nulo
         return tickets.stream().map(TicketDTO::new).collect(Collectors.toList());
     }
 
     public List<TicketDTO> getTicketsOfTheWeek() {
-        List<Ticket> tickets = ticketRepository.findByDate(DateUtils.getLocalDateOfTheWeek());
+        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateUtils.getLocalDateOfTheWeek()))
+                .orElse(new ArrayList<>()); // Retorna uma lista vazia se for nulo
         return tickets.stream().map(TicketDTO::new).collect(Collectors.toList());
+    }
+
+    public TicketDTO getLastTicket() {
+        return convertTicketToTicketDTO(ticketRepository.getUltimoTicket());
     }
 }

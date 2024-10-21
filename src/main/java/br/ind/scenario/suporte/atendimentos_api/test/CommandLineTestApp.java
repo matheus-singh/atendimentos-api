@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class CommandLineTestApp {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -31,9 +30,10 @@ public class CommandLineTestApp {
     public void run() {
         String menuMessage = """
                 Operacoes:
-                1- Buscar um ticket pelo numero
-                2- Buscar tickets da semana
-                3- Buscar tickets em um intervalo
+                1- Solicitar um ticket pelo numero
+                2- Solicitar ultimos 500 tickets
+                3- Solicitar tickets em um intervalo
+                4- Buscar ticket no banco pelo numero
                 0- Sair
                 """;
         int option = Integer.MAX_VALUE;
@@ -44,13 +44,16 @@ public class CommandLineTestApp {
             SCANNER.nextLine();
             switch (option){
                 case 1:
-                    searchTicketByNumber();
+                    buscarNoOctaPeloNumero();
                     break;
                 case 2:
-                    searchLastWeekTickets();
+                    buscarUltimos500TicketsNoOcta();
                     break;
                 case 3:
-                    buscarTicketsEmUmIntervalo();
+                    buscarNoOctaPorIntervaloDeNumero();
+                    break;
+                case 4:
+                    trazerTicketDoBancoPorNumero();
                     break;
                 case 0:
                     System.out.println("Fechando aplicação linha de comando.");
@@ -63,7 +66,65 @@ public class CommandLineTestApp {
         }
     }
 
-    private void buscarTicketsEmUmIntervalo() {
+    private void buscarUltimos500TicketsNoOcta() {
+        Ticket ultimoTicket = ticketRepository.getUltimoTicket();
+        Long numero = ultimoTicket.getNumero();
+        List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
+        int counter = 0;
+        try{
+            System.out.println("Buscando tickets...");
+            for (Long i = numero-500; i<=numero+500; i++){
+                String ticketJson = octadeskAPI.getTicket(i);
+                TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+                System.out.println(ticketFound);
+                Ticket ticket = new Ticket(ticketFound);
+                System.out.println("Ticket encontrado! Numero - " + i);
+                listaDeTicketsEncontrados.add(ticket);
+                counter++;
+                if (counter == 500){
+                    try {
+                        listaDeTicketsEncontrados.forEach(this::saveTicket);
+                        System.out.println(" 500 Tickets Saved and Updated. Returning...");
+                    } catch (Exception e) {
+                        System.out.println("An error has occurred: {}" + e.getMessage());
+                    }
+                    counter = 0;
+                    listaDeTicketsEncontrados.clear();
+                }
+            }
+        } catch (Exception e){
+            System.out.println("Ocorreu um erro na requisicao: "+e.getMessage());
+        }
+        if (!listaDeTicketsEncontrados.isEmpty()){
+            try {
+                listaDeTicketsEncontrados.forEach(this::saveTicket);
+                System.out.println(" Remaining Tickets Saved and Updated. Returning...");
+            } catch (Exception e) {
+                System.out.println("An error has occurred: {}" + e.getMessage());
+            }
+        }
+
+    }
+
+    private void trazerTicketDoBancoPorNumero() {
+        System.out.println("Digite o numero do ticket:");
+        Long number = SCANNER.nextLong();
+        SCANNER.nextLine();
+        try{
+            System.out.println("Procurando Ticket...");
+            Optional<Ticket> ticketEncontrado = Optional.ofNullable(ticketRepository.findByNumber(number));
+
+            if (ticketEncontrado.isPresent()){
+                System.out.println(ticketEncontrado.get());
+            } else {
+                System.out.println("Ticket não encontrado.");
+            }
+        } catch (Exception e){
+            System.out.println("Ocorreu um erro na requisicao: "+e.getMessage());
+        }
+    }
+
+    private void buscarNoOctaPorIntervaloDeNumero() {
         System.out.println("Deseja buscar a partir de qual ticket? Digete o numero: ");
         int numero = SCANNER.nextInt();
         SCANNER.nextLine();
@@ -71,6 +132,7 @@ public class CommandLineTestApp {
         int numeroFim = SCANNER.nextInt();
         SCANNER.nextLine();
         List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
+        int counter = 0;
         try{
             System.out.println("Buscando tickets...");
             for (int i = numero; i<=numeroFim; i++){
@@ -80,34 +142,32 @@ public class CommandLineTestApp {
                 Ticket ticket = new Ticket(ticketFound);
                 System.out.println("Ticket encontrado! Numero - " + i);
                 listaDeTicketsEncontrados.add(ticket);
+                counter++;
+                if (counter == 500){
+                    try {
+                        listaDeTicketsEncontrados.forEach(this::saveTicket);
+                        System.out.println(" 1000 Tickets Saved and Updated. Returning...");
+                    } catch (Exception e) {
+                        System.out.println("An error has occurred: {}" + e.getMessage());
+                    }
+                    counter = 0;
+                    listaDeTicketsEncontrados.clear();
+                }
             }
         } catch (Exception e){
             System.out.println("Ocorreu um erro na requisicao: "+e.getMessage());
         }
-        try {
-            listaDeTicketsEncontrados.forEach(this::saveOrUpdateTicket);
-            System.out.println("Tickets Saved and Updated. Returning...");
-        } catch (Exception e) {
-            System.out.println("An error has occurred: {}" + e.getMessage());
+        if (!listaDeTicketsEncontrados.isEmpty()){
+            try {
+                listaDeTicketsEncontrados.forEach(this::saveTicket);
+                System.out.println(" Remaining Tickets Saved and Updated. Returning...");
+            } catch (Exception e) {
+                System.out.println("An error has occurred: {}" + e.getMessage());
+            }
         }
     }
 
-    private void searchLastWeekTickets() {
-        try{
-            System.out.println("Buscando tickets da semana...");
-            String ticketsDaSemanaJson = octadeskAPI.getTicketsOfTheWeek();
-            List<TicketSearchData> ticketsFound = dataConverter.stringToJsonList(ticketsDaSemanaJson, TicketSearchData.class);
-            System.out.println("Tickets da semana encontrados!");
-
-            List<Ticket> tickets = ticketsFound.stream().map(Ticket::new).collect(Collectors.toList());
-            tickets.forEach(this::saveOrUpdateTicket);
-            System.out.println("Total tickets of the week: "+Long.valueOf(tickets.size()));
-        } catch (Exception e){
-            System.out.println("Ocorreu um erro na requisicao: "+e.getMessage());
-        }
-    }
-
-    private void searchTicketByNumber(){
+    private void buscarNoOctaPeloNumero(){
         System.out.println("Digite o numero do ticket:");
         Integer number = SCANNER.nextInt();
         SCANNER.nextLine();
@@ -124,21 +184,24 @@ public class CommandLineTestApp {
             Ticket ticket = new Ticket(ticketFound);
             System.out.println("Ticket encontrado!");
 
-            saveOrUpdateTicket(ticket);
+
+            saveTicket(ticket);
             System.out.println(ticket);
         } catch (Exception e){
             System.out.println("Ocorreu um erro na requisicao: "+e.getMessage());
         }
     }
 
-    private void saveOrUpdateTicket(Ticket ticket){
-        Optional<Ticket> existingTicketOpt = ticketRepository.findByOctaId(ticket.getOctaId());
-        if (existingTicketOpt.isPresent()) {
+    private void saveTicket(Ticket ticket){
+        Optional<Ticket> existingTicketOpt = Optional.ofNullable(ticketRepository.findByNumber(ticket.getNumero()));
+        if (existingTicketOpt.isPresent() && !(existingTicketOpt.get().getOctaId() == null)) {
             Ticket existingTicket = existingTicketOpt.get();
             ticketSyncService.updateExistingTicket(existingTicket, ticket);
             ticketRepository.save(existingTicket);
         } else {
-            ticketRepository.save(ticket);
+            if (!(ticket.getOctaId() == null)){
+                ticketRepository.save(ticket);
+            }
         }
     }
 }

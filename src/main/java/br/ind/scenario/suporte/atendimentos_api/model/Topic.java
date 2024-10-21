@@ -9,7 +9,7 @@ public enum Topic {
     PROBLEMA_REVENDA("Problema Revenda", "Problema"),
     SOLICITACAO("Solicitação"),
     TROCA("Troca"),
-    PROBLEMA_SCENARIO("Problema Scenario"),
+    PROBLEMA_SCENARIO("Problema Scenario", "7 - Problema Scenario"),
     TOPICO_VAZIO((String) null);
 
     private final String[] classificacoesEmPortugues;

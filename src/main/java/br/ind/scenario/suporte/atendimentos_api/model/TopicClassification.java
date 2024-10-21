@@ -27,7 +27,8 @@ public enum TopicClassification {
     CONFIG_E2 ("7 - Config"),
     EMBRACE_APP ("7 - E-App"),
     PRODUTO ("7 - Produto"),
-    OUTROS_RECURSOS ("7 - Recursos");
+    OUTROS_RECURSOS ("7 - Recursos"),
+    EM_CORRECAO ("Em correção");
 
     private final String classificacaoEmPortugues;
 
