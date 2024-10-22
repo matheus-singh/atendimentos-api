@@ -16,9 +16,9 @@ import java.util.Scanner;
 public class CommandLineTestApp {
     private static final Scanner SCANNER = new Scanner(System.in);
     private final TicketSyncService ticketSyncService;
-    private IDataConverter dataConverter;
-    private ConsumoOctadeskAPI octadeskAPI;
-    private TicketRepository ticketRepository;
+    private final IDataConverter dataConverter;
+    private final ConsumoOctadeskAPI octadeskAPI;
+    private final TicketRepository ticketRepository;
 
     public CommandLineTestApp(IDataConverter dataConverter, ConsumoOctadeskAPI octadeskAPI, TicketRepository ticketRepository, TicketSyncService ticketSyncService) {
         this.dataConverter = dataConverter;
