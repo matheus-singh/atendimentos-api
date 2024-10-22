@@ -26,6 +26,5 @@ public class AtendimentosApiApplication {
 //	@Override
 //	public void run(String... args) throws Exception {
 //		CommandLineTestApp app = new CommandLineTestApp(dataConverter, octaAPI, ticketRep, ticketSyncService);
-//		app.run();
 //	}
 }
