@@ -40,6 +40,11 @@ public class TicketService {
     }
 
     public TicketDTO getLastTicket() {
-        return convertTicketToTicketDTO(ticketRepository.getUltimoTicket());
+        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
+        Ticket ultimoTicket = new Ticket();
+        if (optUltimoTicket.isPresent()){
+            ultimoTicket = optUltimoTicket.get();
+        }
+        return convertTicketToTicketDTO(ultimoTicket);
     }
 }

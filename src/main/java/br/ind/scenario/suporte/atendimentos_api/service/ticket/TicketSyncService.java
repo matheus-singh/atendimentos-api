@@ -39,12 +39,19 @@ public class TicketSyncService {
     // Método para sincronizar os ultimos tickets de 30 em 30 minutos, segunda a sexta, das 08:00 às 18:00
     @Scheduled(cron = "0 0/30 8-18 * * MON-FRI")
     public void syncTickets() {
-        Ticket ultimoTicket = ticketRepository.getUltimoTicket();
-        Long numero = ultimoTicket.getNumero();
+        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
+        Long numero = Long.MIN_VALUE;
+        Ticket ultimoTicket = new Ticket();
+        if (optUltimoTicket.isPresent()){
+            ultimoTicket = optUltimoTicket.get();
+            numero = ultimoTicket.getNumero();
+        } else {
+            numero = 11L;
+        }
         List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
         try {
             logger.info("Sincronizando tickets...");
-            for (Long i = numero - 10; i <= numero + 10; i++) {
+            for (long i = numero - 10; i <= numero + 10; i++) {
                 String ticketJson = octadeskAPI.getTicket(i);
                 TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
                 Ticket ticket = new Ticket(ticketFound);
@@ -66,13 +73,20 @@ public class TicketSyncService {
     // Método para sincronizar todos os tickets todo sábado às 00:00 horas
     @Scheduled(cron = "0 0 0 * * SAT")
     public void syncAllTimeTickets() {
-        Ticket ultimoTicket = ticketRepository.getUltimoTicket();
-        Long numero = ultimoTicket.getNumero();
+        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
+        Long numero = Long.MIN_VALUE;
+        Ticket ultimoTicket = new Ticket();
+        if (optUltimoTicket.isPresent()){
+            ultimoTicket = optUltimoTicket.get();
+            numero = ultimoTicket.getNumero();
+        } else {
+            numero = 11L;
+        }
         List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
         int counter = 0;
         try {
             logger.info("Sincronizando todos os tickets...");
-            for (Long i = 1L; i <= numero; i++) {
+            for (long i = 1L; i <= 20000L; i++) {
                 String ticketJson = octadeskAPI.getTicket(i);
                 TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
                 Ticket ticket = new Ticket(ticketFound);

@@ -17,5 +17,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByDate(LocalDate date);
 
     @Query("SELECT t FROM Ticket t WHERE t.numero = (SELECT MAX(t2.numero) FROM Ticket t2)")
-    Ticket getUltimoTicket();
+    Optional<Ticket> getUltimoTicket();
 }

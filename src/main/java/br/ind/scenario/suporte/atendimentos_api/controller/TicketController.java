@@ -45,4 +45,10 @@ public class TicketController {
     public void syncLastTickets(){
         ticketSyncService.syncTickets();
     }
+
+    @PutMapping("/sync/all")
+    @Transactional
+    public void syncAllTickets(){
+        ticketSyncService.syncAllTimeTickets();
+    }
 }

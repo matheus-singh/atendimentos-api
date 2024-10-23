@@ -31,9 +31,8 @@ public class CommandLineTestApp {
         String menuMessage = """
                 Operacoes:
                 1- Solicitar um ticket pelo numero
-                2- Solicitar ultimos 500 tickets
-                3- Solicitar tickets em um intervalo
-                4- Buscar ticket no banco pelo numero
+                2- Solicitar tickets em um intervalo
+                3- Buscar ticket no banco pelo numero
                 0- Sair
                 """;
         int option = Integer.MAX_VALUE;
@@ -47,12 +46,9 @@ public class CommandLineTestApp {
                     buscarNoOctaPeloNumero();
                     break;
                 case 2:
-                    buscarUltimos500TicketsNoOcta();
-                    break;
-                case 3:
                     buscarNoOctaPorIntervaloDeNumero();
                     break;
-                case 4:
+                case 3:
                     trazerTicketDoBancoPorNumero();
                     break;
                 case 0:
@@ -64,46 +60,6 @@ public class CommandLineTestApp {
                     break;
             }
         }
-    }
-
-    private void buscarUltimos500TicketsNoOcta() {
-        Ticket ultimoTicket = ticketRepository.getUltimoTicket();
-        Long numero = ultimoTicket.getNumero();
-        List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
-        int counter = 0;
-        try{
-            System.out.println("Buscando tickets...");
-            for (Long i = numero-500; i<=numero+500; i++){
-                String ticketJson = octadeskAPI.getTicket(i);
-                TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
-                System.out.println(ticketFound);
-                Ticket ticket = new Ticket(ticketFound);
-                System.out.println("Ticket encontrado! Numero - " + i);
-                listaDeTicketsEncontrados.add(ticket);
-                counter++;
-                if (counter == 500){
-                    try {
-                        listaDeTicketsEncontrados.forEach(this::saveTicket);
-                        System.out.println(" 500 Tickets Saved and Updated. Returning...");
-                    } catch (Exception e) {
-                        System.out.println("An error has occurred: {}" + e.getMessage());
-                    }
-                    counter = 0;
-                    listaDeTicketsEncontrados.clear();
-                }
-            }
-        } catch (Exception e){
-            System.out.println("Ocorreu um erro na requisicao: "+e.getMessage());
-        }
-        if (!listaDeTicketsEncontrados.isEmpty()){
-            try {
-                listaDeTicketsEncontrados.forEach(this::saveTicket);
-                System.out.println(" Remaining Tickets Saved and Updated. Returning...");
-            } catch (Exception e) {
-                System.out.println("An error has occurred: {}" + e.getMessage());
-            }
-        }
-
     }
 
     private void trazerTicketDoBancoPorNumero() {
