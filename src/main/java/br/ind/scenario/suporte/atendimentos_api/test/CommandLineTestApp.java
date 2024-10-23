@@ -33,7 +33,7 @@ public class CommandLineTestApp {
                 1- Solicitar um ticket pelo numero
                 2- Solicitar tickets em um intervalo
                 3- Buscar ticket no banco pelo numero
-                0- Sair
+                0- Sair 
                 """;
         int option = Integer.MAX_VALUE;
         while (option != 0){
