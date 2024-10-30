@@ -51,4 +51,10 @@ public class TicketController {
     public void syncAllTickets(){
         ticketSyncService.syncAllTimeTickets();
     }
+
+    @PutMapping("/sync/week")
+    @Transactional
+    public void syncWeekTickets(){
+        ticketSyncService.syncWeekTickets();
+    }
 }

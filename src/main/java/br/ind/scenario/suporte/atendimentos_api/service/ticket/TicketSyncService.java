@@ -136,6 +136,7 @@ public class TicketSyncService {
         existingTicket.setLinhaDeProduto(newTicket.getLinhaDeProduto());
         existingTicket.setTopico(newTicket.getTopico());
         existingTicket.setClassificacaoDoTopico(newTicket.getClassificacaoDoTopico());
+        existingTicket.setNumeroDeSerie(newTicket.getNumeroDeSerie());
     }
 
     private void saveOrUpdateTicket(Ticket ticket) {
@@ -153,5 +154,39 @@ public class TicketSyncService {
 
     private void logError(Exception e) {
         logger.info("An error has occurred: {}", e.getMessage());
+    }
+
+    // Método para sincronizar os tickets da semana, todas as segundas 10:00
+    @Scheduled(cron = "0 0 10 * * MON")
+    public void syncWeekTickets() {
+        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
+        Long numero;
+        Ticket ultimoTicket;
+        if (optUltimoTicket.isPresent()){
+            ultimoTicket = optUltimoTicket.get();
+            numero = ultimoTicket.getNumero();
+        } else {
+            numero = 11L;
+        }
+        List<Ticket> listaDeTicketsEncontrados = new ArrayList<>();
+        try {
+            logger.info("Sincronizando tickets...");
+            for (long i = numero - 300; i <= numero + 100; i++) {
+                String ticketJson = octadeskAPI.getTicket(i);
+                TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+                Ticket ticket = new Ticket(ticketFound);
+                listaDeTicketsEncontrados.add(ticket);
+            }
+        } catch (Exception e) {
+            logger.info("<--------------------- Erro na requisição dos tickets para sincronização --------------------->");
+            logError(e);
+        }
+        try {
+            listaDeTicketsEncontrados.forEach(this::saveOrUpdateTicket);
+            logger.info("Tickets sincronizados!");
+        } catch (Exception e) {
+            logger.info("<--------------------- Erro na sincronização do banco de dados --------------------->");
+            logError(e);
+        }
     }
 }

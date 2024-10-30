@@ -23,6 +23,7 @@ public class TicketDTO {
     private String linkOD;
     private String produto;
     private LinhaDeProduto linhaDeProduto;
+    private String numeroDeSerie;
 
     public TicketDTO(){
     }
@@ -41,6 +42,7 @@ public class TicketDTO {
         this.linkOD = ticket.getLinkOD();
         this.produto = ticket.getProduto();
         this.linhaDeProduto = ticket.getLinhaDeProduto();
+        this.numeroDeSerie = ticket.getNumeroDeSerie();
     }
 
     public Long getNumber() {

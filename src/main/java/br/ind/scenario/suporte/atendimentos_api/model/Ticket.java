@@ -38,6 +38,7 @@ public class Ticket {
     private LocalDate dataDeResolucao;
     private String linkOD;
     private String produto;
+    private String numeroDeSerie;
 
     @Enumerated(EnumType.STRING)
     private LinhaDeProduto linhaDeProduto;
@@ -63,8 +64,10 @@ public class Ticket {
 
         if(ticketSearchData.customFieldData() == null){
             this.linhaDeProduto = LinhaDeProduto.SEM_LINHA_DE_PRODUTO;
+            this.numeroDeSerie = "-";
         } else {
             this.linhaDeProduto = LinhaDeProduto.fromString(ticketSearchData.customFieldData().linhaDeProduto());
+            this.numeroDeSerie = ticketSearchData.customFieldData().numeroSerie();
         }
 
         Optional<Integer> interactionsConteiner = Optional.ofNullable(ticketSearchData.interactions());
@@ -75,6 +78,14 @@ public class Ticket {
             topicoUpdate.ifPresent(t -> this.topico = Topic.fromString(t));
             classificacaoTopicoUpdate.ifPresent(c -> this.classificacaoDoTopico = TopicClassification.fromString(c));
         }
+    }
+
+    public String getNumeroDeSerie() {
+        return numeroDeSerie;
+    }
+
+    public void setNumeroDeSerie(String numeroDeSerie) {
+        this.numeroDeSerie = numeroDeSerie;
     }
 
     public Long getId() {
