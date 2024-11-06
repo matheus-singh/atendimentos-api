@@ -2,6 +2,7 @@ package br.ind.scenario.suporte.atendimentos_api.service.ticket;
 
 import br.ind.scenario.suporte.atendimentos_api.model.Ticket;
 import br.ind.scenario.suporte.atendimentos_api.model.dto.TicketDTO;
+import br.ind.scenario.suporte.atendimentos_api.service.octa.ConsumoOctadeskAPI;
 import br.ind.scenario.suporte.atendimentos_api.service.repository.TicketRepository;
 import br.ind.scenario.suporte.atendimentos_api.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class TicketService {
 
     @Autowired
     private TicketRepository ticketRepository;
+
+    @Autowired
+    private ConsumoOctadeskAPI octadeskAPI;
 
     private TicketDTO convertTicketToTicketDTO(Ticket ticket){
         return new TicketDTO(ticket);
@@ -46,5 +50,10 @@ public class TicketService {
             ultimoTicket = optUltimoTicket.get();
         }
         return convertTicketToTicketDTO(ultimoTicket);
+    }
+
+    public String octaGetTicketByNumber(Long number) {
+        String ticketJson = octadeskAPI.getTicket(number);
+        return ticketJson;
     }
 }

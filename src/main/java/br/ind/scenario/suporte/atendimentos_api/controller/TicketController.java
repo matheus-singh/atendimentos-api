@@ -24,6 +24,16 @@ public class TicketController {
         return ticketService.getTicketByNumber(number);
     }
 
+    @GetMapping("/octa/{number}")
+    public String octaGetTicket(@PathVariable Long number){
+        return ticketService.octaGetTicketByNumber(number);
+    }
+
+    @PutMapping("/octa/save/{number}")
+    public TicketDTO saveTicketFromOcta(@PathVariable Long number){
+        return ticketSyncService.saveTicketFromOcta(number);
+    }
+
     @GetMapping("/last")
     public TicketDTO getLastTicket(){
         return ticketService.getLastTicket();

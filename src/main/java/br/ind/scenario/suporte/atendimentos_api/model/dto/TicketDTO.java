@@ -24,6 +24,7 @@ public class TicketDTO {
     private String produto;
     private LinhaDeProduto linhaDeProduto;
     private String numeroDeSerie;
+    private Boolean isABug;
 
     public TicketDTO(){
     }
@@ -43,6 +44,23 @@ public class TicketDTO {
         this.produto = ticket.getProduto();
         this.linhaDeProduto = ticket.getLinhaDeProduto();
         this.numeroDeSerie = ticket.getNumeroDeSerie();
+        this.isABug = ticket.getIsABug();
+    }
+
+    public Boolean getIsABug() {
+        return isABug;
+    }
+
+    public void setIsABug(Boolean ABug) {
+        isABug = ABug;
+    }
+
+    public String getNumeroDeSerie() {
+        return numeroDeSerie;
+    }
+
+    public void setNumeroDeSerie(String numeroDeSerie) {
+        this.numeroDeSerie = numeroDeSerie;
     }
 
     public Long getNumber() {

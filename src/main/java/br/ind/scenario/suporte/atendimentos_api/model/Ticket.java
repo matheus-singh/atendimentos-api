@@ -40,6 +40,9 @@ public class Ticket {
     private String produto;
     private String numeroDeSerie;
 
+    @Column(name = "is_a_bug")
+    private Boolean isABug;
+
     @Enumerated(EnumType.STRING)
     private LinhaDeProduto linhaDeProduto;
 
@@ -61,6 +64,7 @@ public class Ticket {
         this.dataDeResolucao = DateUtils.createLocalDateFromString(ticketSearchData.dataDeResolucao());
         this.linkOD = ticketSearchData.linkOD();
         this.produto = ticketSearchData.produto();
+        this.isABug = ticketSearchData.customFieldData().isABug();
 
         if(ticketSearchData.customFieldData() == null){
             this.linhaDeProduto = LinhaDeProduto.SEM_LINHA_DE_PRODUTO;
@@ -78,6 +82,14 @@ public class Ticket {
             topicoUpdate.ifPresent(t -> this.topico = Topic.fromString(t));
             classificacaoTopicoUpdate.ifPresent(c -> this.classificacaoDoTopico = TopicClassification.fromString(c));
         }
+    }
+
+    public Boolean getIsABug() {
+        return isABug;
+    }
+
+    public void setIsABug(Boolean ABug) {
+        isABug = ABug;
     }
 
     public String getNumeroDeSerie() {
@@ -228,6 +240,7 @@ public class Ticket {
                 "linkOD='" + linkOD + '\'' + "\n" +
                 "produto='" + produto + '\'' + "\n" +
                 "linhaDeProduto=" + linhaDeProduto + "\n" +
+                "Bug?=" + isABug + "\n" +
                 '}';
     }
 

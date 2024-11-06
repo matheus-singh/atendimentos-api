@@ -1,6 +1,7 @@
 package br.ind.scenario.suporte.atendimentos_api.service.ticket;
 
 import br.ind.scenario.suporte.atendimentos_api.model.Ticket;
+import br.ind.scenario.suporte.atendimentos_api.model.dto.TicketDTO;
 import br.ind.scenario.suporte.atendimentos_api.model.records.TicketSearchData;
 import br.ind.scenario.suporte.atendimentos_api.service.data.IDataConverter;
 import br.ind.scenario.suporte.atendimentos_api.service.octa.ConsumoOctadeskAPI;
@@ -137,6 +138,7 @@ public class TicketSyncService {
         existingTicket.setTopico(newTicket.getTopico());
         existingTicket.setClassificacaoDoTopico(newTicket.getClassificacaoDoTopico());
         existingTicket.setNumeroDeSerie(newTicket.getNumeroDeSerie());
+        existingTicket.setIsABug(newTicket.getIsABug());
     }
 
     private void saveOrUpdateTicket(Ticket ticket) {
@@ -150,6 +152,19 @@ public class TicketSyncService {
                 ticketRepository.save(ticket);
             }
         }
+    }
+
+    private TicketDTO convertTicketToTicketDTO(Ticket ticket){
+        return new TicketDTO(ticket);
+    }
+
+    public TicketDTO saveTicketFromOcta(Long number) {
+        String ticketJson = octadeskAPI.getTicket(number);
+        TicketSearchData ticketData = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+        logger.info(String.valueOf(ticketData.customFieldData()));
+        Ticket ticket = new Ticket(ticketData);
+        logger.info(String.valueOf(ticket.getIsABug()));
+        return this.convertTicketToTicketDTO(ticket);
     }
 
     private void logError(Exception e) {
