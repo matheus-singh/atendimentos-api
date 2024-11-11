@@ -37,8 +37,8 @@ public class TicketSyncService {
         syncTickets();
     }
 
-    // Método para sincronizar os ultimos tickets de 30 em 30 minutos, segunda a sexta, das 08:00 às 18:00
-    @Scheduled(cron = "0 0/30 8-18 * * MON-FRI")
+    // Método para sincronizar os ultimos tickets de 15 em 15 minutos, segunda a sexta, das 08:00 às 18:00
+    @Scheduled(cron = "0 0/15 8-18 * * MON-FRI")
     public void syncTickets() {
         Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
         Long numero = Long.MIN_VALUE;
@@ -172,7 +172,7 @@ public class TicketSyncService {
     }
 
     // Método para sincronizar os tickets da semana, todas as segundas 10:00
-    @Scheduled(cron = "0 0 10 * * MON")
+    @Scheduled(cron = "0 0 10 * * MON-FRI")
     public void syncWeekTickets() {
         Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
         Long numero;
