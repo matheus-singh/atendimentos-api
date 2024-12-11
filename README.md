@@ -10,7 +10,7 @@ O objetivo da **atendimentos-api** é criar uma ferramenta para o time de suport
 
 - **Integração com Octadesk**: A API se conecta à API de Tickets da Octadesk para obter informações sobre os atendimentos realizados.
 - **Persistência de Dados**: Os tickets são armazenados em um banco de dados PostgreSQL utilizando o Spring Data JPA.
-- **Alimentação Automática**: O banco de dados é atualizado automaticamente todos os dias às 06:00 e 19:00 horas.
+- **Alimentação Automática**: O banco de dados é atualizado automaticamente todos os dias.
 - **Consulta de Dados**: A API permite realizar requisições HTTP para obter dados dos tickets, possibilitando a criação de relatórios por uma aplicação front-end.
 
 ## Tecnologias Utilizadas
