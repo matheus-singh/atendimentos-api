@@ -30,14 +30,15 @@ public class TicketController {
     }
 
     @PutMapping("/octa/save/{number}")
+    @Transactional
     public TicketDTO saveTicketFromOcta(@PathVariable Long number){
         return ticketSyncService.saveTicketFromOcta(number);
     }
 
-    @GetMapping("/last")
-    public TicketDTO getLastTicket(){
-        return ticketService.getLastTicket();
-    }
+//    @GetMapping("/last")
+//    public TicketDTO getLastTicket(){
+//        return ticketService.getLastTicket();
+//    }
 
     // Formato de data correto: YYYY-MM-DD
     @GetMapping("/data/{date}")
@@ -50,21 +51,21 @@ public class TicketController {
         return ticketService.getTicketsOfTheWeek();
     }
 
-    @PutMapping("/sync")
-    @Transactional
-    public void syncLastTickets(){
-        ticketSyncService.syncTickets();
-    }
-
-    @PutMapping("/sync/all")
-    @Transactional
-    public void syncAllTickets(){
-        ticketSyncService.syncAllTimeTickets();
-    }
-
-    @PutMapping("/sync/week")
-    @Transactional
-    public void syncWeekTickets(){
-        ticketSyncService.syncWeekTickets();
-    }
+//    @PutMapping("/sync")
+//    @Transactional
+//    public void syncLastTickets(){
+//        ticketSyncService.syncTickets();
+//    }
+//
+//    @PutMapping("/sync/all")
+//    @Transactional
+//    public void syncAllTickets(){
+//        ticketSyncService.syncAllTimeTickets();
+//    }
+//
+//    @PutMapping("/sync/week")
+//    @Transactional
+//    public void syncWeekTickets(){
+//        ticketSyncService.syncWeekTickets();
+//    }
 }

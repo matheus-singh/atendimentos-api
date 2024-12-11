@@ -1,6 +1,6 @@
 package br.ind.scenario.suporte.atendimentos_api.service.octa;
 
-import br.ind.scenario.suporte.atendimentos_api.util.DateUtils;
+import br.ind.scenario.suporte.atendimentos_api.util.DateTimeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
@@ -118,7 +118,7 @@ public class ConsumoOctadeskAPI {
     }
 
     public String getTicketsOfTheWeek() {
-        String dateString = DateUtils.getLastWeekDateFromTodayAsString();
+        String dateString = DateTimeUtils.getLastWeekDateFromTodayAsString();
         String encodedDate = URLEncoder.encode(">" + dateString, StandardCharsets.UTF_8);
         String url = BASE_TICKET_URL + "search?openDate=" + encodedDate + "&take=100&page=";
 
@@ -138,7 +138,7 @@ public class ConsumoOctadeskAPI {
     }
 
     public String getTicketsOfTheDay() {
-        String dateString = DateUtils.getYesterdayDateAsString();
+        String dateString = DateTimeUtils.getYesterdayDateAsString();
         String encodedDate = URLEncoder.encode(">" + dateString, StandardCharsets.UTF_8);
         String url = BASE_TICKET_URL + "search?openDate=" + encodedDate + "&take=100&page=";
 

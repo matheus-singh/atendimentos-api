@@ -1,6 +1,6 @@
 package br.ind.scenario.suporte.atendimentos_api.service.repository;
 
-import br.ind.scenario.suporte.atendimentos_api.model.Ticket;
+import br.ind.scenario.suporte.atendimentos_api.model.ticket.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

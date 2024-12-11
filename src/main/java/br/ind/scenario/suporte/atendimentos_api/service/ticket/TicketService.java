@@ -1,10 +1,10 @@
 package br.ind.scenario.suporte.atendimentos_api.service.ticket;
 
-import br.ind.scenario.suporte.atendimentos_api.model.Ticket;
+import br.ind.scenario.suporte.atendimentos_api.model.ticket.Ticket;
 import br.ind.scenario.suporte.atendimentos_api.model.dto.TicketDTO;
 import br.ind.scenario.suporte.atendimentos_api.service.octa.ConsumoOctadeskAPI;
 import br.ind.scenario.suporte.atendimentos_api.service.repository.TicketRepository;
-import br.ind.scenario.suporte.atendimentos_api.util.DateUtils;
+import br.ind.scenario.suporte.atendimentos_api.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,25 +32,25 @@ public class TicketService {
     }
 
     public List<TicketDTO> getTicketsByDate(String date) {
-        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateUtils.createLocalDateFromString(date)))
+        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateTimeUtils.createLocalDateFromString(date)))
                 .orElse(new ArrayList<>()); // Retorna uma lista vazia se for nulo
         return tickets.stream().map(TicketDTO::new).collect(Collectors.toList());
     }
 
     public List<TicketDTO> getTicketsOfTheWeek() {
-        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateUtils.getLocalDateOfTheWeek()))
+        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateTimeUtils.getLocalDateOfTheWeek()))
                 .orElse(new ArrayList<>()); // Retorna uma lista vazia se for nulo
         return tickets.stream().map(TicketDTO::new).collect(Collectors.toList());
     }
 
-    public TicketDTO getLastTicket() {
-        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
-        Ticket ultimoTicket = new Ticket();
-        if (optUltimoTicket.isPresent()){
-            ultimoTicket = optUltimoTicket.get();
-        }
-        return convertTicketToTicketDTO(ultimoTicket);
-    }
+//    public TicketDTO getLastTicket() {
+//        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
+//        Ticket ultimoTicket = new Ticket();
+//        if (optUltimoTicket.isPresent()){
+//            ultimoTicket = optUltimoTicket.get();
+//        }
+//        return convertTicketToTicketDTO(ultimoTicket);
+//    }
 
     public String octaGetTicketByNumber(Long number) {
         String ticketJson = octadeskAPI.getTicket(number);
