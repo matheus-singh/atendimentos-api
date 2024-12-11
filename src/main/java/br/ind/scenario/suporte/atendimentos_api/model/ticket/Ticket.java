@@ -32,7 +32,6 @@ public abstract class Ticket {
 
     private Long numero;
     private String status;
-    private String linhaDeProduto;
     private String titulo;
     private String revenda;
     private String tecnico;
@@ -42,5 +41,5 @@ public abstract class Ticket {
     private LocalTime horaDeCriacao;
     private LocalTime horaDeResolucao;
     private String linkOD;
-
+    private String linhaDeProduto;
 }
