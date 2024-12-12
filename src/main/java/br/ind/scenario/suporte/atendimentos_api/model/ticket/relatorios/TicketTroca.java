@@ -2,7 +2,7 @@ package br.ind.scenario.suporte.atendimentos_api.model.ticket.relatorios;
 
 import br.ind.scenario.suporte.atendimentos_api.model.records.TicketSearchData;
 import br.ind.scenario.suporte.atendimentos_api.model.ticket.Ticket;
-
+import br.ind.scenario.suporte.atendimentos_api.util.DateTimeUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -11,39 +11,44 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
-@DiscriminatorValue("duvida")
+@DiscriminatorValue("troca")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class TicketDuvida extends Ticket {
-    private String classificacao;
-    private String natureza;
+public class TicketTroca extends Ticket {
     private String produtosOuServicos;
+    private String numeroDeSerie;
+    private String macAdress;
+    private String emGarantia;
+    private String instalacao;
 
     @Override
     @Column(name = "relatorio", insertable = false, updatable = false)
     public String getRelatorio() {
-        return "duvida";
+        return "troca";
     }
 
-    public TicketDuvida (TicketSearchData ticketSearchData) {
+    public TicketTroca(TicketSearchData ticketSearchData) {
         super(ticketSearchData);
 
         // Setando atributos específicos de sugestão
-        this.setNatureza(ticketSearchData.customFieldData().natureza());
         this.setProdutosOuServicos(ticketSearchData.produtosOuServicos());
-        this.setClassificacao(ticketSearchData.customFieldData().classificacao());
+        this.setNumeroDeSerie(ticketSearchData.customFieldData().numeroDeSerie());
+        this.setMacAdress(ticketSearchData.customFieldData().macAdress());
+        this.setEmGarantia(ticketSearchData.customFieldData().emGarantia());
+        this.setInstalacao(ticketSearchData.customFieldData().instalacao());
     }
 
-    public void update(TicketDuvida newTicket) {
+    public void update(TicketTroca newTicket) {
         super.update(newTicket);
 
         // Setando atributos específicos de sugestão
-        this.setNatureza(newTicket.getNatureza());
         this.setProdutosOuServicos(newTicket.getProdutosOuServicos());
-        this.setClassificacao(newTicket.getClassificacao());
+        this.setNumeroDeSerie(newTicket.getNumeroDeSerie());
+        this.setMacAdress(newTicket.getMacAdress());
+        this.setEmGarantia(newTicket.getEmGarantia());
+        this.setInstalacao(newTicket.getInstalacao());
     }
 }

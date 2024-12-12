@@ -11,39 +11,44 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
-@DiscriminatorValue("duvida")
+@DiscriminatorValue("assistencia tecnica")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class TicketDuvida extends Ticket {
-    private String classificacao;
-    private String natureza;
+public class TicketAssistenciaTecnica extends Ticket {
     private String produtosOuServicos;
+    private String numeroDeSerie;
+    private String macAdress;
+    private String versaoFirmwareAcModulos;
+    private String emGarantia;
 
     @Override
     @Column(name = "relatorio", insertable = false, updatable = false)
     public String getRelatorio() {
-        return "duvida";
+        return "assistencia tecnica";
     }
 
-    public TicketDuvida (TicketSearchData ticketSearchData) {
+    public TicketAssistenciaTecnica (TicketSearchData ticketSearchData) {
         super(ticketSearchData);
 
         // Setando atributos específicos de sugestão
-        this.setNatureza(ticketSearchData.customFieldData().natureza());
         this.setProdutosOuServicos(ticketSearchData.produtosOuServicos());
-        this.setClassificacao(ticketSearchData.customFieldData().classificacao());
+        this.setNumeroDeSerie(ticketSearchData.customFieldData().numeroDeSerie());
+        this.setMacAdress(ticketSearchData.customFieldData().macAdress());
+        this.setVersaoFirmwareAcModulos(ticketSearchData.customFieldData().versaoFirmwareAcModulos());
+        this.setEmGarantia(ticketSearchData.customFieldData().emGarantia());
     }
 
-    public void update(TicketDuvida newTicket) {
+    public void update(TicketAssistenciaTecnica newTicket) {
         super.update(newTicket);
 
         // Setando atributos específicos de sugestão
-        this.setNatureza(newTicket.getNatureza());
         this.setProdutosOuServicos(newTicket.getProdutosOuServicos());
-        this.setClassificacao(newTicket.getClassificacao());
+        this.setNumeroDeSerie(newTicket.getNumeroDeSerie());
+        this.setMacAdress(newTicket.getMacAdress());
+        this.setVersaoFirmwareAcModulos(newTicket.getVersaoFirmwareAcModulos());
+        this.setEmGarantia(newTicket.getEmGarantia());
     }
 }

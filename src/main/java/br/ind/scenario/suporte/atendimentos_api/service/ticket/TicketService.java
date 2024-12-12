@@ -31,6 +31,7 @@ public class TicketService {
         return ticket.map(this::convertTicketToTicketDTO).orElse(null); // Retorna null se o ticket não for encontrado
     }
 
+    // Formato de data correto: YYYY-MM-DD
     public List<TicketDTO> getTicketsByDate(String date) {
         List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateTimeUtils.createLocalDateFromString(date)))
                 .orElse(new ArrayList<>()); // Retorna uma lista vazia se for nulo
@@ -38,22 +39,22 @@ public class TicketService {
     }
 
     public List<TicketDTO> getTicketsOfTheWeek() {
-        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateTimeUtils.getLocalDateOfTheWeek()))
+        List<Ticket> tickets = Optional.ofNullable(ticketRepository.findByDate(DateTimeUtils.getLocalDateOfLastWeekFirstDay()))
                 .orElse(new ArrayList<>()); // Retorna uma lista vazia se for nulo
         return tickets.stream().map(TicketDTO::new).collect(Collectors.toList());
     }
 
-//    public TicketDTO getLastTicket() {
-//        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
-//        Ticket ultimoTicket = new Ticket();
-//        if (optUltimoTicket.isPresent()){
-//            ultimoTicket = optUltimoTicket.get();
-//        }
-//        return convertTicketToTicketDTO(ultimoTicket);
-//    }
+    public TicketDTO getLastTicket() {
+        Optional<Ticket> optUltimoTicket = ticketRepository.getUltimoTicket();
+        Ticket ultimoTicket;
+        if (optUltimoTicket.isPresent()){
+            ultimoTicket = optUltimoTicket.get();
+            return convertTicketToTicketDTO(ultimoTicket);
+        }
+        return null;
+    }
 
     public String octaGetTicketByNumber(Long number) {
-        String ticketJson = octadeskAPI.getTicket(number);
-        return ticketJson;
+        return octadeskAPI.getTicket(number);
     }
 }

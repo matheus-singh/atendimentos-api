@@ -20,7 +20,7 @@ public class DateTimeUtils {
         return previousDate.toString();
     }
 
-    public static LocalDate getLocalDateOfTheWeek(){
+    public static LocalDate getLocalDateOfLastWeekFirstDay(){
         return createLocalDateFromString(getLastWeekDateFromTodayAsString());
     }
 

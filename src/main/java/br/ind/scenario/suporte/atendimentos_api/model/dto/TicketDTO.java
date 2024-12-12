@@ -26,6 +26,7 @@ public class TicketDTO {
     private LocalDate dataDeResolucao;
     private String linkOD;
     private String linhaDeProduto;
+    private String relatorio;
 
     public TicketDTO(Ticket ticket){
         this.number = ticket.getNumero();
@@ -38,6 +39,7 @@ public class TicketDTO {
         this.dataDeResolucao = ticket.getDataDeResolucao();
         this.linkOD = ticket.getLinkOD();
         this.linhaDeProduto = ticket.getLinhaDeProduto();
+        this.relatorio = ticket.getRelatorio();
     }
 
 

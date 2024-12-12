@@ -2,7 +2,6 @@ package br.ind.scenario.suporte.atendimentos_api.model.ticket.relatorios;
 
 import br.ind.scenario.suporte.atendimentos_api.model.records.TicketSearchData;
 import br.ind.scenario.suporte.atendimentos_api.model.ticket.Ticket;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -11,39 +10,35 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
-@DiscriminatorValue("duvida")
+@DiscriminatorValue("solicitacao")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class TicketDuvida extends Ticket {
-    private String classificacao;
-    private String natureza;
+public class TicketSolicitacao extends Ticket {
+    private String categoria;
     private String produtosOuServicos;
 
     @Override
     @Column(name = "relatorio", insertable = false, updatable = false)
     public String getRelatorio() {
-        return "duvida";
+        return "solicitacao";
     }
 
-    public TicketDuvida (TicketSearchData ticketSearchData) {
+    public TicketSolicitacao(TicketSearchData ticketSearchData) {
         super(ticketSearchData);
 
         // Setando atributos específicos de sugestão
-        this.setNatureza(ticketSearchData.customFieldData().natureza());
+        this.setCategoria(ticketSearchData.customFieldData().categoria());
         this.setProdutosOuServicos(ticketSearchData.produtosOuServicos());
-        this.setClassificacao(ticketSearchData.customFieldData().classificacao());
     }
 
-    public void update(TicketDuvida newTicket) {
+    public void update(TicketSolicitacao newTicket) {
         super.update(newTicket);
 
         // Setando atributos específicos de sugestão
-        this.setNatureza(newTicket.getNatureza());
+        this.setCategoria(newTicket.getCategoria());
         this.setProdutosOuServicos(newTicket.getProdutosOuServicos());
-        this.setClassificacao(newTicket.getClassificacao());
     }
 }

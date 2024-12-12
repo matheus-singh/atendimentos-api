@@ -2,7 +2,6 @@ package br.ind.scenario.suporte.atendimentos_api.model.ticket.relatorios;
 
 import br.ind.scenario.suporte.atendimentos_api.model.records.TicketSearchData;
 import br.ind.scenario.suporte.atendimentos_api.model.ticket.Ticket;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -11,39 +10,44 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
-@DiscriminatorValue("duvida")
+@DiscriminatorValue("em analise")
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class TicketDuvida extends Ticket {
-    private String classificacao;
+public class TicketEmAnalise extends Ticket {
+    private String timeResponsavelPelaAnalise;
     private String natureza;
     private String produtosOuServicos;
+    private String instalacao;
+    private String problemaDeProduto;
 
     @Override
     @Column(name = "relatorio", insertable = false, updatable = false)
     public String getRelatorio() {
-        return "duvida";
+        return "em analise";
     }
 
-    public TicketDuvida (TicketSearchData ticketSearchData) {
+    public TicketEmAnalise (TicketSearchData ticketSearchData) {
         super(ticketSearchData);
 
         // Setando atributos específicos de sugestão
+        this.setTimeResponsavelPelaAnalise(ticketSearchData.customFieldData().timeResponsavelPelaAnalise());
         this.setNatureza(ticketSearchData.customFieldData().natureza());
         this.setProdutosOuServicos(ticketSearchData.produtosOuServicos());
-        this.setClassificacao(ticketSearchData.customFieldData().classificacao());
+        this.setInstalacao(ticketSearchData.customFieldData().instalacao());
+        this.setProblemaDeProduto(ticketSearchData.customFieldData().problemaDeProduto());
     }
 
-    public void update(TicketDuvida newTicket) {
+    public void update(TicketEmAnalise newTicket) {
         super.update(newTicket);
 
         // Setando atributos específicos de sugestão
+        this.setTimeResponsavelPelaAnalise(newTicket.getTimeResponsavelPelaAnalise());
         this.setNatureza(newTicket.getNatureza());
         this.setProdutosOuServicos(newTicket.getProdutosOuServicos());
-        this.setClassificacao(newTicket.getClassificacao());
+        this.setInstalacao(newTicket.getInstalacao());
+        this.setProblemaDeProduto(newTicket.getProblemaDeProduto());
     }
 }
