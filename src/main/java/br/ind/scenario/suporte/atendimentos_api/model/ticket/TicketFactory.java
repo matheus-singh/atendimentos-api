@@ -8,7 +8,14 @@ import org.springframework.stereotype.Component;
 public class TicketFactory {
 
     public Ticket create(TicketSearchData ticketSearchData){
-        String relatorio = ticketSearchData.customFieldData().relatorio();
+        var relatorio = ticketSearchData.customFieldData().relatorio();
+        if(relatorio == null){
+            if(ticketSearchData.status().equalsIgnoreCase("Novo")){
+                relatorio = "Novo";
+            } else {
+                relatorio = "";
+            }
+        }
         return switch (relatorio) {
             case "Sugestões" -> new TicketSugestoes(ticketSearchData);
             case "Dúvida" -> new TicketDuvida(ticketSearchData);
@@ -19,6 +26,7 @@ public class TicketFactory {
             case "Solicitação" -> new TicketSolicitacao(ticketSearchData);
             case "Agendamento" -> new TicketAgendamento(ticketSearchData);
             case "Em análise" -> new TicketEmAnalise(ticketSearchData);
+            case "Novo" -> new TicketNovo(ticketSearchData);
             default -> null;
         };
     }
@@ -71,6 +79,11 @@ public class TicketFactory {
                 TicketEmAnalise ticketToUpdateEmAnalise = (TicketEmAnalise) existingTicket;
                 ticketToUpdateEmAnalise.update(newTicketEmAnalise);
                 return ticketToUpdateEmAnalise;
+            case "novo":
+                TicketNovo newTicketNovo = (TicketNovo) ticket;
+                TicketNovo ticketToUpdateNovo = (TicketNovo) existingTicket;
+                ticketToUpdateNovo.update(newTicketNovo);
+                return ticketToUpdateNovo;
             default:
                 return null;
         }

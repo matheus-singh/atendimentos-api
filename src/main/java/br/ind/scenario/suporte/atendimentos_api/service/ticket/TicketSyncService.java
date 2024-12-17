@@ -7,7 +7,6 @@ import br.ind.scenario.suporte.atendimentos_api.model.ticket.TicketFactory;
 import br.ind.scenario.suporte.atendimentos_api.service.data.IDataConverter;
 import br.ind.scenario.suporte.atendimentos_api.service.octa.ConsumoOctadeskAPI;
 import br.ind.scenario.suporte.atendimentos_api.service.repository.TicketRepository;
-import br.ind.scenario.suporte.atendimentos_api.util.DateTimeUtils;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +39,11 @@ public class TicketSyncService {
     // Este método será chamado ao iniciar o aplicativo para sincronizar tickets
     @PostConstruct
     public void init() {
-        syncWeekTickets();
+        syncDailyTickets();
     }
 
     private void logError(Exception e) {
-        logger.info("An error has occurred: {}", e.getMessage());
+        logger.info("An error has occurred: {}", e+": "+ e.getMessage());
     }
 
     private TicketDTO convertTicketToTicketDTO(Ticket ticket){
@@ -85,11 +84,12 @@ public class TicketSyncService {
             logger.info("Sincronizando tickets...");
             for (long i = primeiroNumero; i <= ultimoNumero; i++) {
                 String ticketJson = octadeskAPI.getTicket(i);
-                System.out.println("Json do ticket na sincronizacao: " + ticketJson);
-                TicketSearchData ticketFound = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+                TicketSearchData ticketFound = dataConverter.stringToJsonObject(ticketJson, TicketSearchData.class);
                 Optional<Ticket> ticketOptional = Optional.ofNullable(ticketFactory.create(ticketFound));
                 ticketOptional.ifPresent(listaDeTicketsEncontrados::add);
             }
+        } catch (NullPointerException e){
+            logger.info("<--------------------- Ticket não encontrado! Sincronização finalizada!--------------------->");
         } catch (Exception e) {
             logger.info("<--------------------- Erro na requisição dos tickets para sincronização --------------------->");
             logError(e);
@@ -99,7 +99,7 @@ public class TicketSyncService {
 
     public TicketDTO saveTicketFromOcta(Long number) {
         String ticketJson = octadeskAPI.getTicket(number);
-        TicketSearchData ticketData = dataConverter.stringToJson(ticketJson, TicketSearchData.class);
+        TicketSearchData ticketData = dataConverter.stringToJsonObject(ticketJson, TicketSearchData.class);
         Optional<Ticket> ticket = Optional.ofNullable(ticketFactory.create(ticketData));
         if(ticket.isPresent()){
             Ticket ticketToSave = ticket.get();
@@ -109,19 +109,10 @@ public class TicketSyncService {
         return null;
     }
 
-    // Método para sincronizar os tickets da semana, a cada 15 minutos
-    @Scheduled(cron = "0 0/15 * * * ?")
-    public void syncWeekTickets() {
-        Long primeiroNumero = Long.MIN_VALUE;
+    // Método para sincronizar os tickets do dia, a cada 2 minutos
+    @Scheduled(cron = "0 0/2 * * * ?")
+    public void syncDailyTickets() {
         Long ultimoNumero = Long.MIN_VALUE;
-
-        Optional<Ticket> oldestTicketOp = ticketRepository.findOldestTicketByDate(DateTimeUtils.getLocalDateOfLastWeekFirstDay());
-        if (oldestTicketOp.isPresent()){
-            Ticket primeiroTicket = oldestTicketOp.get();
-            primeiroNumero = primeiroTicket.getNumero();
-        } else {
-            primeiroNumero = 21000L;
-        }
 
         Optional<Ticket> youngestTicketOp = ticketRepository.getUltimoTicket();
         if (youngestTicketOp.isPresent()){
@@ -132,7 +123,25 @@ public class TicketSyncService {
         }
 
         List<Ticket> listaDeTicketsEncontrados =
-                getTicketsFromOctaByNumberRange(primeiroNumero, ultimoNumero+50);
+                getTicketsFromOctaByNumberRange(ultimoNumero-100, ultimoNumero+50);
+        saveListOfTickets(listaDeTicketsEncontrados);
+    }
+
+    // Método para sincronizar os tickets da semana, a cada 12 horas
+    @Scheduled(cron = "0 0 12/12 * * ?")
+    public void syncWeekTickets() {
+        Long ultimoNumero = Long.MIN_VALUE;
+
+        Optional<Ticket> youngestTicketOp = ticketRepository.getUltimoTicket();
+        if (youngestTicketOp.isPresent()){
+            Ticket ultimoTicket = youngestTicketOp.get();
+            ultimoNumero = ultimoTicket.getNumero();
+        } else {
+            ultimoNumero = 21300L;
+        }
+
+        List<Ticket> listaDeTicketsEncontrados =
+                getTicketsFromOctaByNumberRange(ultimoNumero-300, ultimoNumero+50);
         saveListOfTickets(listaDeTicketsEncontrados);
     }
 }

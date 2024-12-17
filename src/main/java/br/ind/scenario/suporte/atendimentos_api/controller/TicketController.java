@@ -1,6 +1,7 @@
 package br.ind.scenario.suporte.atendimentos_api.controller;
 
 import br.ind.scenario.suporte.atendimentos_api.model.dto.TicketDTO;
+import br.ind.scenario.suporte.atendimentos_api.model.records.TicketSearchData;
 import br.ind.scenario.suporte.atendimentos_api.service.ticket.TicketService;
 import br.ind.scenario.suporte.atendimentos_api.service.ticket.TicketSyncService;
 import jakarta.transaction.Transactional;
@@ -54,6 +55,12 @@ public class TicketController {
     @PutMapping("/sync/week")
     @Transactional
     public void syncWeekTickets() {
-        ticketSyncService.syncWeekTickets();
+        ticketSyncService.syncDailyTickets();
+    }
+
+
+    @GetMapping("/check/creation/{number}")
+    public TicketSearchData checkSearchDataCreation(@PathVariable Long number){
+        return ticketService.checkSearchDataCreation(number);
     }
 }

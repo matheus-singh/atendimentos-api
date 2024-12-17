@@ -11,7 +11,7 @@ import java.util.List;
 public class DataConverter implements IDataConverter{
     private final ObjectMapper MAPPER = new ObjectMapper();
     @Override
-    public <T> T stringToJson(String json, Class<T> $class) {
+    public <T> T stringToJsonObject(String json, Class<T> $class) {
         try {
             return MAPPER.readValue(json, $class);
         } catch (JsonProcessingException e) {
@@ -19,7 +19,7 @@ public class DataConverter implements IDataConverter{
         }
     }
 
-    public <T> List<T> stringToJsonList(String json, Class<T> $class) {
+    public <T> List<T> stringToJsonObjectList(String json, Class<T> $class) {
         try {
             JavaType type = MAPPER.getTypeFactory().constructCollectionType(List.class, $class);
             return MAPPER.readValue(json, type);

@@ -17,10 +17,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t from Ticket t WHERE t.dataDeCriacao >= :date")
     List<Ticket> findByDate(LocalDate date);
 
-    // Formato de data correto: YYYY-MM-DD
-    @Query("SELECT t FROM Ticket t WHERE t.dataDeCriacao >= :date ORDER BY t.numero ASC")
-    Optional<Ticket> findOldestTicketByDate(LocalDate date);
-
     @Query("SELECT t FROM Ticket t WHERE t.numero = (SELECT MAX(t2.numero) FROM Ticket t2)")
     Optional<Ticket> getUltimoTicket();
 

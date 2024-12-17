@@ -1,7 +1,9 @@
 package br.ind.scenario.suporte.atendimentos_api.service.ticket;
 
+import br.ind.scenario.suporte.atendimentos_api.model.records.TicketSearchData;
 import br.ind.scenario.suporte.atendimentos_api.model.ticket.Ticket;
 import br.ind.scenario.suporte.atendimentos_api.model.dto.TicketDTO;
+import br.ind.scenario.suporte.atendimentos_api.service.data.IDataConverter;
 import br.ind.scenario.suporte.atendimentos_api.service.octa.ConsumoOctadeskAPI;
 import br.ind.scenario.suporte.atendimentos_api.service.repository.TicketRepository;
 import br.ind.scenario.suporte.atendimentos_api.util.DateTimeUtils;
@@ -21,6 +23,9 @@ public class TicketService {
 
     @Autowired
     private ConsumoOctadeskAPI octadeskAPI;
+
+    @Autowired
+    private IDataConverter dataConverter;
 
     private TicketDTO convertTicketToTicketDTO(Ticket ticket){
         return new TicketDTO(ticket);
@@ -56,5 +61,10 @@ public class TicketService {
 
     public String octaGetTicketByNumber(Long number) {
         return octadeskAPI.getTicket(number);
+    }
+
+    public TicketSearchData checkSearchDataCreation(Long number) {
+        String json = octadeskAPI.getTicket(number);
+        return dataConverter.stringToJsonObject(json, TicketSearchData.class);
     }
 }
