@@ -63,4 +63,10 @@ public class TicketController {
     public TicketSearchData checkSearchDataCreation(@PathVariable Long number){
         return ticketService.checkSearchDataCreation(number);
     }
+
+    @PutMapping("/sync/all")
+    @Transactional
+    public void syncAllTickets(){
+        ticketSyncService.syncAllTickets();
+    }
 }

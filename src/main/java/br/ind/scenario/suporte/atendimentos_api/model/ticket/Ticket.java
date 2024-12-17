@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "Tickets")
@@ -40,6 +41,9 @@ public abstract class Ticket {
     private LocalTime horaDeResolucao;
     private String linkOD;
     private String linhaDeProduto;
+    private String numeroDoTicket;
+    private String mes;
+    private String ano;
 
     public abstract String getRelatorio();
 
@@ -58,6 +62,9 @@ public abstract class Ticket {
         this.setHoraDeResolucao(DateTimeUtils.createLocalTimeFromString(ticketSearchData.dataDeResolucao()));
         this.setLinkOD(ticketSearchData.linkOD());
         this.setLinhaDeProduto(ticketSearchData.customFieldData().linhaDeProduto());
+        this.setNumeroDoTicket(String.valueOf(ticketSearchData.numero()));
+        this.setMes(DateTimeUtils.createLocalDateFromString(ticketSearchData.dataDeCriacao()).format(DateTimeFormatter.ofPattern("MMMM")));
+        this.setAno(String.valueOf(DateTimeUtils.createLocalDateFromString(ticketSearchData.dataDeCriacao()).getYear()));
     }
 
     public void update(Ticket newTicket){
@@ -74,5 +81,8 @@ public abstract class Ticket {
         this.setHoraDeResolucao(newTicket.getHoraDeResolucao());
         this.setLinkOD(newTicket.getLinkOD());
         this.setLinhaDeProduto(newTicket.getLinhaDeProduto());
+        this.setNumeroDoTicket(newTicket.getNumeroDoTicket());
+        this.setMes(newTicket.getMes());
+        this.setAno(newTicket.getAno());
     }
 }

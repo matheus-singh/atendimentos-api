@@ -144,4 +144,31 @@ public class TicketSyncService {
                 getTicketsFromOctaByNumberRange(ultimoNumero-300, ultimoNumero+50);
         saveListOfTickets(listaDeTicketsEncontrados);
     }
+
+
+    public void syncAllTickets() {
+        Long primeiroNumero = Long.MIN_VALUE;
+        Long ultimoNumero = Long.MIN_VALUE;
+
+        Optional<Ticket> youngestTicketOp = ticketRepository.getUltimoTicket();
+        Optional<Ticket> oldestTicketOp = ticketRepository.getPrimeiroTicket();
+
+        if (oldestTicketOp.isPresent()){
+            Ticket primeiroTicket = oldestTicketOp.get();
+            primeiroNumero = primeiroTicket.getNumero();
+        } else {
+            primeiroNumero = 21000L;
+        }
+
+        if (youngestTicketOp.isPresent()){
+            Ticket ultimoTicket = youngestTicketOp.get();
+            ultimoNumero = ultimoTicket.getNumero();
+        } else {
+            ultimoNumero = 22000L;
+        }
+
+        List<Ticket> listaDeTicketsEncontrados =
+                getTicketsFromOctaByNumberRange(primeiroNumero, ultimoNumero);
+        saveListOfTickets(listaDeTicketsEncontrados);
+    }
 }

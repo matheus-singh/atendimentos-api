@@ -22,6 +22,7 @@ public class TicketEmAnalise extends Ticket {
     private String produtosOuServicos;
     private String instalacao;
     private String problemaDeProduto;
+    private String classificacaoDev;
 
     @Override
     @Column(name = "relatorio", insertable = false, updatable = false)
@@ -38,6 +39,7 @@ public class TicketEmAnalise extends Ticket {
         this.setProdutosOuServicos(ticketSearchData.produtosOuServicos());
         this.setInstalacao(ticketSearchData.customFieldData().instalacao());
         this.setProblemaDeProduto(ticketSearchData.customFieldData().problemaDeProduto());
+        this.setClassificacaoDev(ticketSearchData.customFieldData().classificacaoDev());
     }
 
     public void update(TicketEmAnalise newTicket) {
@@ -49,5 +51,6 @@ public class TicketEmAnalise extends Ticket {
         this.setProdutosOuServicos(newTicket.getProdutosOuServicos());
         this.setInstalacao(newTicket.getInstalacao());
         this.setProblemaDeProduto(newTicket.getProblemaDeProduto());
+        this.setClassificacaoDev(newTicket.getClassificacaoDev());
     }
 }

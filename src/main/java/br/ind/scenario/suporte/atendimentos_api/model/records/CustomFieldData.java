@@ -19,5 +19,6 @@ public record CustomFieldData(@JsonAlias("linha_de_produto") String linhaDeProdu
                               @JsonAlias("tipo_de_agendamento") String tipoDeAgendamento,
                               @JsonAlias("time_responsavel_pela_anlise") String timeResponsavelPelaAnalise,
                               @JsonAlias("problema_de_produto") String problemaDeProduto,
+                              @JsonAlias("classificacao_dev") String classificacaoDev,
                               @JsonAlias("relatorio") String relatorio) {
 }
